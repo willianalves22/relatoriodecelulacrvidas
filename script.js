@@ -93,7 +93,7 @@ async function confirmarEnvio() {
 
   try {
     const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbyO81fGbtnytY3RqHtJxAzFWy4D-foacOu75gWUYyJfsQ9fvHcTc7LfmUvuC1KQ4OA/exec",
+      "https://script.google.com/macros/s/AKfycbxJaZVPpPOOfl8Drd9xg1RqoQad2xpwt2Vj_n6xCe5nYErpAsyeaxjMm-yhGWnerzDo/exec",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
