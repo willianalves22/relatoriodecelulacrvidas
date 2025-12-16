@@ -45,10 +45,6 @@
     <!-- FORMULÁRIO -->
     <form id="celula-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-        <input type="text" name="lider" placeholder="Líder *" class="input" required>
-        <input type="password" name="senha" placeholder="Senha *" class="input" required>
-
-
       <input type="number" name="membrosPresentes" placeholder="Membros Presentes *" class="input" required>
       <input type="number" name="convidadosPresentes" placeholder="Convidados Presentes *" class="input" required>
       <input type="number" name="criancas" placeholder="Crianças (0 a 12) *" class="input" required>
@@ -105,6 +101,19 @@
     </div>
 
   </div>
+
+  <!-- MODAL RESUMO -->
+<div id="modal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+  <div class="bg-white max-w-lg w-full rounded-lg p-6">
+    <h2 class="text-xl font-bold mb-4">📋 Conferir Relatório</h2>
+    <div id="resumo" class="text-sm space-y-1 max-h-96 overflow-auto"></div>
+
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="fecharModal()" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition">Corrigir</button>
+      <button onclick="confirmarEnvio()" class="px-4 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition">Confirmar</button>
+    </div>
+  </div>
+</div>
 
   <!-- Script -->
   <script src="script.js"></script>
