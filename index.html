@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Relatório da Célula | CR Vidas</title>
+  <link rel="manifest" href="manifest.json">
+
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="favicon-48.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+
+
+  <!-- Favicon -->
+  <link rel="icon" href="logo-crvidas.png" type="image/png">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex justify-center p-4">
+
+  <div class="bg-white w-full max-w-3xl rounded-xl shadow-lg p-6 border-t-8 border-orange-500">
+
+    <!-- CABEÇALHO -->
+    <div class="flex flex-col md:flex-row items-center gap-4 bg-black rounded-lg p-4 mb-6">
+
+      <!-- Logo -->
+      <img src="logo-crvidas.png" alt="CR Vidas"
+        class="w-20 h-auto">
+
+      <!-- Título -->
+      <div class="text-center md:text-left">
+        <h1 class="text-2xl font-bold text-white">
+          RELATÓRIO DE CÉLULA
+        </h1>
+        <p class="text-sm text-orange-400">
+          CR VIDAS – Posto da Mata BA
+        </p>
+      </div>
+
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <form id="celula-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <input type="text" name="lider" placeholder="Líder *" class="input" required>
+        <input type="password" name="senha" placeholder="Senha *" class="input" required>
+
+
+      <input type="number" name="membrosPresentes" placeholder="Membros Presentes *" class="input" required>
+      <input type="number" name="convidadosPresentes" placeholder="Convidados Presentes *" class="input" required>
+      <input type="number" name="criancas" placeholder="Crianças (0 a 12) *" class="input" required>
+
+      <input type="number" name="totalPresentes" placeholder="Total Presentes"
+        class="input bg-gray-100" readonly>
+
+      <input type="number" name="membrosEfetivos" placeholder="Membros Efetivos *" class="input" required>
+      <input type="number" name="membrosDiscipulados" placeholder="Membros Discipulados *" class="input" required>
+
+      <!-- CURSOS -->
+      <div class="md:col-span-2">
+        <p class="font-semibold text-black mb-2">
+          Cursos de Formação *
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <input type="number" name="cursoStartRestart" placeholder="START / RESTART" class="input" required>
+          <input type="number" name="cursoCrescendo" placeholder="Crescendo na Fé / Unção" class="input" required>
+          <input type="number" name="cursoAguia1" placeholder="Academia das Águias 1" class="input" required>
+          <input type="number" name="cursoAguia2" placeholder="Academia das Águias 2" class="input" required>
+          <input type="number" name="cursoSupervisores" placeholder="Curso de Supervisores" class="input" required>
+          <input type="number" name="cursoFormacaoPastoral" placeholder="Formação Pastoral" class="input" required>
+        </div>
+      </div>
+
+      <input type="number" name="cultoCelebracao" placeholder="Culto de Celebração *" class="input" required>
+      <input type="number" name="rhema" placeholder="Rhema *" class="input" required>
+
+      <input type="text" name="corArea" placeholder="Cor da Área *" class="input" required>
+      <input type="text" name="supervisor" placeholder="Supervisor *" class="input" required>
+      <input type="text" name="lider" placeholder="Líder da Célula *" class="input" required>
+      <input type="text" name="nomeCelula" placeholder="Nome da Célula *" class="input" required>
+
+      <input type="date" name="dataReuniao" class="input" required>
+
+      <input type="number" step="0.01" name="ofertaDinheiro" placeholder="Oferta em Dinheiro *" class="input" required>
+      <input type="number" step="0.01" name="ofertaPix" placeholder="Oferta via Pix *" class="input" required>
+
+      <input type="number" step="0.01" name="totalOferta"
+        placeholder="Total da Oferta"
+        class="input bg-gray-100 md:col-span-2" readonly>
+
+      <button type="submit"
+        class="md:col-span-2 bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg font-bold transition active:scale-95 shadow">
+        Enviar Relatório
+      </button>
+
+    </form>
+
+    <div id="mensagem-sucesso"
+      class="hidden mt-6 bg-green-100 text-green-800 p-4 rounded-lg text-center font-bold">
+      ✅ Relatório enviado com sucesso!
+    </div>
+
+  </div>
+
+  <!-- Script -->
+  <script src="script.js"></script>
+
+  <!-- Inputs padrão -->
+  <style>
+    .input {
+      width: 100%;
+      padding: .6rem;
+      border: 1px solid #d1d5db;
+      border-radius: .375rem;
+    }
+    .input:focus {
+      outline: none;
+      border-color: #f97316;
+      box-shadow: 0 0 0 1px #f97316;
+    }
+  </style>
+
+</body>
+</html>
