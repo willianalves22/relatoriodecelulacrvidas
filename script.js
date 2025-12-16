@@ -88,14 +88,14 @@ async function confirmarEnvio() {
   button.textContent = "Enviando...";
 
   try {
-    const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbyO81fGbtnytY3RqHtJxAzFWy4D-foacOu75gWUYyJfsQ9fvHcTc7LfmUvuC1KQ4OA/exec",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dadosGlobais)
-      }
-    );
+const response = await fetch(
+  "https://script.google.com/macros/s/AKfycbyO81fGbtnytY3RqHtJxAzFWy4D-foacOu75gWUYyJfsQ9fvHcTc7LfmUvuC1KQ4OA/exec",
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(dadosGlobais)
+  }
+);
 
     if (!response.ok) throw new Error("Erro ao enviar");
 
