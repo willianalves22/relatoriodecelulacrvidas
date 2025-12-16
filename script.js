@@ -11,7 +11,11 @@ function soma(campos, destino) {
   campos.forEach(c => {
     total += Number(form.querySelector(`[name="${c}"]`).value || 0);
   });
-  form.querySelector(`[name="${destino}"]`).value = total;
+  if (destino === "totalOferta") {
+    form.querySelector(`[name="${destino}"]`).value = total.toFixed(2);
+  } else {
+    form.querySelector(`[name="${destino}"]`).value = total;
+  }
 }
 
 form.querySelectorAll("input").forEach(input => {
@@ -88,14 +92,14 @@ async function confirmarEnvio() {
   button.textContent = "Enviando...";
 
   try {
-const response = await fetch(
-  "https://script.google.com/macros/s/AKfycbyO81fGbtnytY3RqHtJxAzFWy4D-foacOu75gWUYyJfsQ9fvHcTc7LfmUvuC1KQ4OA/exec",
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(dadosGlobais)
-  }
-);
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbyO81fGbtnytY3RqHtJxAzFWy4D-foacOu75gWUYyJfsQ9fvHcTc7LfmUvuC1KQ4OA/exec",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dadosGlobais)
+      }
+    );
 
     if (!response.ok) throw new Error("Erro ao enviar");
 
