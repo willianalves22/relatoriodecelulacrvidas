@@ -5,12 +5,15 @@ const resumoDiv = document.getElementById("resumo");
 
 let dadosGlobais = {};
 
-// Cálculos automáticos para totais
+// ===============================
+// CÁLCULOS AUTOMÁTICOS
+// ===============================
 function soma(campos, destino) {
   let total = 0;
-  campos.forEach(c => {
-    total += Number(form.querySelector(`[name="${c}"]`).value || 0);
+  campos.forEach((campo) => {
+    total += Number(form.querySelector(`[name="${campo}"]`).value || 0);
   });
+
   if (destino === "totalOferta") {
     form.querySelector(`[name="${destino}"]`).value = total.toFixed(2);
   } else {
@@ -18,20 +21,25 @@ function soma(campos, destino) {
   }
 }
 
-form.querySelectorAll("input").forEach(input => {
+form.querySelectorAll("input").forEach((input) => {
   input.addEventListener("input", () => {
-    soma(["membrosPresentes", "convidadosPresentes", "criancas"], "totalPresentes");
+    soma(
+      ["membrosPresentes", "convidadosPresentes", "criancas"],
+      "totalPresentes"
+    );
     soma(["ofertaDinheiro", "ofertaPix"], "totalOferta");
   });
 });
 
-// Ao clicar em enviar, mostrar resumo para confirmação
-form.addEventListener("submit", e => {
+// ===============================
+// SUBMIT → MOSTRA MODAL
+// ===============================
+form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  // Validação visual
   let valido = true;
-  form.querySelectorAll("input[required]").forEach(campo => {
+
+  form.querySelectorAll("input[required]").forEach((campo) => {
     campo.classList.remove("border-red-500");
     if (!campo.value) {
       campo.classList.add("border-red-500");
@@ -46,7 +54,6 @@ form.addEventListener("submit", e => {
 
   dadosGlobais = Object.fromEntries(new FormData(form));
 
-  // Montar resumo (exibe label amigável)
   const labels = {
     lider: "Líder",
     nomeCelula: "Nome da Célula",
@@ -69,7 +76,7 @@ form.addEventListener("submit", e => {
     supervisor: "Supervisor",
     ofertaDinheiro: "Oferta em Dinheiro",
     ofertaPix: "Oferta via Pix",
-    totalOferta: "Total da Oferta"
+    totalOferta: "Total da Oferta",
   };
 
   resumoDiv.innerHTML = Object.entries(dadosGlobais)
@@ -80,53 +87,32 @@ form.addEventListener("submit", e => {
   modal.classList.add("flex");
 });
 
-// Fechar modal e voltar para o formulário
+// ===============================
+// FECHAR MODAL
+// ===============================
 function fecharModal() {
   modal.classList.add("hidden");
   modal.classList.remove("flex");
 }
 
-// Confirmar envio - envia para Apps Script, exibe sucesso e links PDF/WhatsApp
-async function confirmarEnvio() {
+// ===============================
+// CONFIRMAR ENVIO (SIMULADO)
+// ===============================
+function confirmarEnvio() {
   button.disabled = true;
   button.textContent = "Enviando...";
 
-  try {
-    const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbxJaZVPpPOOfl8Drd9xg1RqoQad2xpwt2Vj_n6xCe5nYErpAsyeaxjMm-yhGWnerzDo/exec",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dadosGlobais)
-      }
-    );
+  // Simula envio
+  setTimeout(() => {
+    resumoDiv.innerHTML = `
+      <h2 class="text-xl font-bold text-center text-green-600">
+        ✅ Relatório enviado com sucesso!
+      </h2>
+    `;
 
-    if (!response.ok) throw new Error("Erro ao enviar");
-
-    const json = await response.json();
-
-    if (json.status === "ok") {
-      resumoDiv.innerHTML = `
-        <h2 class="text-xl font-bold mb-4">✅ Relatório enviado com sucesso!</h2>
-        <a href="${json.pdf}" target="_blank" class="block bg-orange-500 text-white py-2 rounded mb-2 text-center">
-          📄 Baixar PDF
-        </a>
-        <a href="https://wa.me/?text=${encodeURIComponent(json.pdf)}" target="_blank" class="block bg-green-500 text-white py-2 rounded text-center">
-          📲 Enviar no WhatsApp
-        </a>
-      `;
-      button.textContent = "Enviar Relatório";
-      button.disabled = false;
-    } else {
-      alert("Erro no envio: " + (json.msg || "Tente novamente"));
-      fecharModal();
-      button.textContent = "Enviar Relatório";
-      button.disabled = false;
-    }
-  } catch (error) {
-    alert("Erro de conexão. Tente novamente.");
-    fecharModal();
-    button.textContent = "Enviar Relatório";
-    button.disabled = false;
-  }
+    // SOMENTE AQUI a página é atualizada
+    setTimeout(() => {
+      window.location.reload();
+    }, 1500);
+  }, 800);
 }
