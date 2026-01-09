@@ -1,36 +1,28 @@
-// ===============================
-// ELEMENTOS PRINCIPAIS
-// ===============================
 const form = document.getElementById("celula-form");
-const button = form.querySelector("button");
 const modal = document.getElementById("modal");
 const resumoDiv = document.getElementById("resumo");
+const button = form.querySelector("button");
 
 let dadosGlobais = {};
 
 // ===============================
-// FUNÇÃO DE SOMA AUTOMÁTICA
+// CÁLCULOS AUTOMÁTICOS
 // ===============================
 function soma(campos, destino) {
   let total = 0;
-
   campos.forEach((campo) => {
-    const valor = form.querySelector(`[name="${campo}"]`).value;
-    total += Number(valor || 0);
+    total += Number(form[campo].value || 0);
   });
 
   if (destino === "totalOferta") {
-    form.querySelector(`[name="${destino}"]`).value = total.toFixed(2);
+    form[destino].value = total.toFixed(2);
   } else {
-    form.querySelector(`[name="${destino}"]`).value = total;
+    form[destino].value = total;
   }
 }
 
-// ===============================
-// EVENTOS DE INPUT (CÁLCULOS)
-// ===============================
-form.querySelectorAll("input").forEach((input) => {
-  input.addEventListener("input", () => {
+form.querySelectorAll("input").forEach(() => {
+  form.addEventListener("input", () => {
     soma(
       ["membrosPresentes", "convidadosPresentes", "criancas"],
       "totalPresentes"
@@ -40,60 +32,15 @@ form.querySelectorAll("input").forEach((input) => {
 });
 
 // ===============================
-// SUBMIT DO FORM → ABRE MODAL
+// SUBMIT → MODAL
 // ===============================
 form.addEventListener("submit", (e) => {
   e.preventDefault();
 
-  let valido = true;
-
-  form.querySelectorAll("input[required]").forEach((campo) => {
-    campo.classList.remove("border-red-500");
-    if (!campo.value) {
-      campo.classList.add("border-red-500");
-      valido = false;
-    }
-  });
-
-  if (!valido) {
-    alert("⚠️ Preencha TODOS os campos obrigatórios.");
-    return;
-  }
-
-  // Coleta dados do formulário
   dadosGlobais = Object.fromEntries(new FormData(form));
 
-  // Labels para o resumo
-  const labels = {
-    lider: "Líder",
-    nomeCelula: "Nome da Célula",
-    dataReuniao: "Data da Reunião",
-    membrosPresentes: "Membros Presentes",
-    convidadosPresentes: "Convidados Presentes",
-    criancas: "Crianças (0 a 12)",
-    totalPresentes: "Total Presentes",
-    membrosEfetivos: "Membros Efetivos",
-    membrosDiscipulados: "Membros Discipulados",
-    cursoStartRestart: "Curso START / RESTART",
-    cursoCrescendo: "Curso Crescendo na Fé / Unção",
-    cursoAguia1: "Academia das Águias 1",
-    cursoAguia2: "Academia das Águias 2",
-    cursoSupervisores: "Curso de Supervisores",
-    cursoFormacaoPastoral: "Formação Pastoral",
-    cultoCelebracao: "Culto de Celebração",
-    rhema: "Rhema",
-    corArea: "Cor da Área",
-    supervisor: "Supervisor",
-    ofertaDinheiro: "Oferta em Dinheiro",
-    ofertaPix: "Oferta via Pix",
-    totalOferta: "Total da Oferta",
-  };
-
-  // Monta resumo
   resumoDiv.innerHTML = Object.entries(dadosGlobais)
-    .map(([chave, valor]) => {
-      return `<p><b>${labels[chave] || chave}:</b> ${valor}</p>`;
-    })
+    .map(([k, v]) => `<p><b>${k}:</b> ${v}</p>`)
     .join("");
 
   modal.classList.remove("hidden");
@@ -109,45 +56,27 @@ function fecharModal() {
 }
 
 // ===============================
-// CONFIRMAR ENVIO → ENVIO REAL
+// ENVIO REAL PARA GOOGLE APPS SCRIPT
 // ===============================
 async function confirmarEnvio() {
   button.disabled = true;
   button.textContent = "Enviando...";
 
   try {
-    const response = await fetch(
-      "https://script.google.com/macros/s/AKfycbw0nrpxdre0wiwNMtsep4gO-wKQFomR9mMR6OJcwXcDmJ4aIZprplz4IoVI6e03Pk-y/exec",
-      {
-        method: "POST",
-        mode: "cors",
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(dadosGlobais),
-      }
-    );
+    const response = await fetch("COLE_AQUI_A_URL_DO_WEB_APP", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(dadosGlobais),
+    });
 
     if (response.ok) {
-      resumoDiv.innerHTML = `
-        <h2 class="text-xl font-bold text-center text-green-600">
-          ✅ Relatório enviado com sucesso!
-        </h2>
-      `;
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      resumoDiv.innerHTML =
+        "<h2 class='text-green-600 font-bold text-center'>✅ Enviado com sucesso</h2>";
+      setTimeout(() => location.reload(), 1500);
     } else {
-      alert("Erro ao enviar o relatório.");
-      button.disabled = false;
-      button.textContent = "Confirmar";
+      alert("Erro ao enviar");
     }
-  } catch (error) {
-    console.error("Erro no envio:", error);
-    alert("Erro de conexão. Verifique sua internet.");
-    button.disabled = false;
-    button.textContent = "Confirmar";
+  } catch (e) {
+    alert("Erro de conexão");
   }
 }
