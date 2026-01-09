@@ -1,3 +1,6 @@
+// ===============================
+// ELEMENTOS PRINCIPAIS
+// ===============================
 const form = document.getElementById("celula-form");
 const button = form.querySelector("button");
 const modal = document.getElementById("modal");
@@ -6,12 +9,14 @@ const resumoDiv = document.getElementById("resumo");
 let dadosGlobais = {};
 
 // ===============================
-// CÁLCULOS AUTOMÁTICOS
+// FUNÇÃO DE SOMA AUTOMÁTICA
 // ===============================
 function soma(campos, destino) {
   let total = 0;
+
   campos.forEach((campo) => {
-    total += Number(form.querySelector(`[name="${campo}"]`).value || 0);
+    const valor = form.querySelector(`[name="${campo}"]`).value;
+    total += Number(valor || 0);
   });
 
   if (destino === "totalOferta") {
@@ -21,6 +26,9 @@ function soma(campos, destino) {
   }
 }
 
+// ===============================
+// EVENTOS DE INPUT (CÁLCULOS)
+// ===============================
 form.querySelectorAll("input").forEach((input) => {
   input.addEventListener("input", () => {
     soma(
@@ -32,7 +40,7 @@ form.querySelectorAll("input").forEach((input) => {
 });
 
 // ===============================
-// SUBMIT → MOSTRA MODAL
+// SUBMIT DO FORM → ABRE MODAL
 // ===============================
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -52,8 +60,10 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
+  // Coleta dados do formulário
   dadosGlobais = Object.fromEntries(new FormData(form));
 
+  // Labels para o resumo
   const labels = {
     lider: "Líder",
     nomeCelula: "Nome da Célula",
@@ -79,8 +89,11 @@ form.addEventListener("submit", (e) => {
     totalOferta: "Total da Oferta",
   };
 
+  // Monta resumo
   resumoDiv.innerHTML = Object.entries(dadosGlobais)
-    .map(([k, v]) => `<p><b>${labels[k] || k}:</b> ${v}</p>`)
+    .map(([chave, valor]) => {
+      return `<p><b>${labels[chave] || chave}:</b> ${valor}</p>`;
+    })
     .join("");
 
   modal.classList.remove("hidden");
@@ -96,23 +109,45 @@ function fecharModal() {
 }
 
 // ===============================
-// CONFIRMAR ENVIO (SIMULADO)
+// CONFIRMAR ENVIO → ENVIO REAL
 // ===============================
-function confirmarEnvio() {
+async function confirmarEnvio() {
   button.disabled = true;
   button.textContent = "Enviando...";
 
-  // Simula envio
-  setTimeout(() => {
-    resumoDiv.innerHTML = `
-      <h2 class="text-xl font-bold text-center text-green-600">
-        ✅ Relatório enviado com sucesso!
-      </h2>
-    `;
+  try {
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbw0nrpxdre0wiwNMtsep4gO-wKQFomR9mMR6OJcwXcDmJ4aIZprplz4IoVI6e03Pk-y/exec",
+      {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dadosGlobais),
+      }
+    );
 
-    // SOMENTE AQUI a página é atualizada
-    setTimeout(() => {
-      window.location.reload();
-    }, 1500);
-  }, 800);
+    if (response.ok) {
+      resumoDiv.innerHTML = `
+        <h2 class="text-xl font-bold text-center text-green-600">
+          ✅ Relatório enviado com sucesso!
+        </h2>
+      `;
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+    } else {
+      alert("Erro ao enviar o relatório.");
+      button.disabled = false;
+      button.textContent = "Confirmar";
+    }
+  } catch (error) {
+    console.error("Erro no envio:", error);
+    alert("Erro de conexão. Verifique sua internet.");
+    button.disabled = false;
+    button.textContent = "Confirmar";
+  }
 }
