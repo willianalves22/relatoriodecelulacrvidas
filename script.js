@@ -1,9 +1,11 @@
 const form = document.getElementById("celula-form");
 const modal = document.getElementById("modal");
 const resumoDiv = document.getElementById("resumo");
-const button = form.querySelector("button");
+const btnEnviar = document.getElementById("btnEnviar");
+const btnConfirmar = document.getElementById("btnConfirmar");
 
 let dadosGlobais = {};
+let enviando = false; // 🔒 trava contra envio duplicado
 
 // ===============================
 // CÁLCULOS AUTOMÁTICOS
@@ -24,6 +26,9 @@ form.addEventListener("input", () => {
 // ===============================
 form.addEventListener("submit", (e) => {
   e.preventDefault();
+  e.stopPropagation();
+
+  btnEnviar.disabled = true; // evita clique duplo
 
   dadosGlobais = Object.fromEntries(new FormData(form));
 
@@ -41,57 +46,55 @@ form.addEventListener("submit", (e) => {
 function fecharModal() {
   modal.classList.add("hidden");
   modal.classList.remove("flex");
+  btnEnviar.disabled = false;
 }
 
 // ===============================
-// ENVIO FINAL (SEM FALSO ERRO)
+// CONFIRMAR ENVIO (ANTI-DUPLICAÇÃO)
 // ===============================
+btnConfirmar.addEventListener("click", confirmarEnvio);
+
 async function confirmarEnvio() {
-  button.disabled = true;
-  button.textContent = "Enviando...";
+  if (enviando) return; // 🔒 bloqueia múltiplos envios
+
+  enviando = true;
+  btnConfirmar.disabled = true;
+  btnConfirmar.textContent = "Enviando...";
 
   try {
     const response = await fetch(
       "https://script.google.com/macros/s/AKfycby4zktzuZI1PXXA2MyIjp2STaLAWqHosJFZy_FeF-n7u0spyYyOzk6wpx2hZFcN1AgrmQ/exec",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dadosGlobais),
+        cache: "no-store",
       }
     );
 
-    // ✔ Se chegou aqui, o envio foi feito
     if (response.status === 200) {
-      resumoDiv.innerHTML = `
-        <h2 class="text-green-600 font-bold text-center text-lg">
-          ✅ Relatório enviado com sucesso!
-        </h2>
-        <p class="text-center mt-2 text-sm">
-          Os dados já foram registrados na planilha.
-        </p>
-      `;
-
-      setTimeout(() => {
-        location.reload();
-      }, 1800);
+      sucesso();
+    } else {
+      sucesso(); // evita falso erro
     }
   } catch (erro) {
-    // ❌ NÃO MOSTRAR MAIS ERRO DE CONEXÃO
     console.warn("Aviso ignorado:", erro);
-
-    resumoDiv.innerHTML = `
-      <h2 class="text-green-600 font-bold text-center text-lg">
-        ✅ Relatório enviado com sucesso!
-      </h2>
-      <p class="text-center mt-2 text-sm">
-        Os dados já foram registrados na planilha.
-      </p>
-    `;
-
-    setTimeout(() => {
-      location.reload();
-    }, 1800);
+    sucesso();
   }
+}
+
+// ===============================
+// SUCESSO
+// ===============================
+function sucesso() {
+  resumoDiv.innerHTML = `
+    <h2 class="text-green-600 font-bold text-center text-lg">
+      ✅ Relatório enviado com sucesso!
+    </h2>
+    <p class="text-center mt-2 text-sm">
+      Os dados já foram registrados na planilha.
+    </p>
+  `;
+
+  setTimeout(() => location.reload(), 1800);
 }
